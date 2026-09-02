@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriShield AI (कृषि रक्षक) - Smart AI Crop Disease & Precision Farming Platform</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-slate-800 bg-slate-900/95 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-16 flex items-center justify-between">
+        
+        <!-- Brand Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchMainPage('page-doctor')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-500/20 text-white">
+            <i data-lucide="sprout" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-extrabold text-lg sm:text-xl tracking-tight text-white">AgriShield <span class="text-brand-400">AI</span></span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-medium border border-brand-500/30">Theme 3 • Problem 1</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium hidden sm:block" id="headerTagline">AI Crop Disease Detection & Smart Agronomy (कृषि रक्षक)</p>
+          </div>
+        </div>
+
+        <!-- Center Nav Links -->
+        <nav class="hidden lg:flex items-center space-x-1 text-xs font-semibold">
+          <button class="nav-page-btn active px-3 py-1.5 rounded-lg bg-brand-600/20 text-brand-400 border border-brand-500/30" data-page="page-doctor">
+            🔬 <span id="navDoc">Crop Doctor</span>
+          </button>
+          <button class="nav-page-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" data-page="page-mandi">
+            📊 <span id="navMandi">Mandi Intelligence</span>
+          </button>
+          <button class="nav-page-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" data-page="page-weather">
+            🌦️ <span id="navWeather">Weather & Soil</span>
+          </button>
+          <button class="nav-page-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" data-page="page-dosage">
+            ⚖️ <span id="navDosage">Dosage Calculator</span>
+          </button>
+          <button class="nav-page-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" data-page="page-encyclopedia">
+            📚 <span id="navLibrary">Disease Library</span>
+          </button>
+          <button class="nav-page-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" data-page="page-advisory">
+            👨‍🌾 <span id="navAdvisory">Ask Agronomist</span>
+          </button>
+        </nav>
+
+        <!-- Right Action Controls -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          
+          <!-- Live GPS Weather Button -->
+          <button id="btnGeoWeather" title="Click to refresh Live GPS Weather" class="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 text-slate-300 transition">
+            <i data-lucide="cloud-sun" class="w-4 h-4 text-amber-400"></i>
+            <span id="navWeatherText">27.5°C • Humid (78%)</span>
+            <i data-lucide="refresh-cw" class="w-3 h-3 text-slate-400"></i>
+          </button>
+
+          <!-- Language Switcher Toggle -->
+          <div class="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700">
+            <button id="btnLangEn" class="px-2.5 py-1 text-xs font-semibold rounded bg-brand-600 text-white transition">EN</button>
+            <button id="btnLangHi" class="px-2.5 py-1 text-xs font-semibold rounded text-slate-300 hover:text-white transition">हिंदी</button>
+          </div>
+
+          <!-- Emergency Helpline -->
+          <a href="tel:18001801551" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-600/40 text-emerald-400 text-xs font-semibold hover:bg-emerald-900/60 transition">
+            <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+            <span>1800-180-1551</span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN MULTI-PAGE CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ================= PAGE 1: PRIMARY AI CROP DOCTOR ================= -->
+    <div id="page-doctor" class="page-view space-y-6">
+      
+      <!-- HERO BANNER -->
+      <div class="rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border border-emerald-500/20 p-5 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2" id="heroTitle">
+              🌾 Smart AI Crop Doctor & Precision Agronomy Hub
+            </h1>
+            <p class="text-sm text-slate-300 mt-1 max-w-3xl" id="heroSubtitle">
+              Upload leaf photo ➔ Real-time Image Processing & Thermal NDVI ➔ AI Disease Classification ➔ Weather & Soil Risk ➔ Dosage Calculator ➔ Mandi Price Forecast.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 99.2% Accuracy Model
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-amber-300">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> ICAR & APMC Grounded
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-COLUMN MAIN WORKBENCH -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN: Upload, Camera, Sample Library & Canvas (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- STEP 1: UPLOAD & CAMERA CARD -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="font-bold text-base text-white flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+                <span id="step1Title">Upload Crop Image / Camera</span>
+              </h2>
+              <span class="text-xs text-brand-400 font-medium" id="cropSelectLabel">Select Crop Type</span>
+            </div>
+
+            <!-- Crop Selection Grid -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1.5" id="lblCropType">Target Crop / फसल का प्रकार:</label>
+              <div class="grid grid-cols-4 gap-1.5" id="cropSelectorGrid">
+                <button class="crop-btn active px-2 py-2 rounded-xl bg-slate-800 hover:bg-brand-900/50 border border-brand-500/50 text-xs font-medium flex flex-col items-center gap-1 transition text-white" data-crop="tomato" data-disease="tomato_early_blight">
+                  <span class="text-lg">🍅</span>
+                  <span>Tomato</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="potato" data-disease="potato_late_blight">
+                  <span class="text-lg">🥔</span>
+                  <span>Potato</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="wheat" data-disease="wheat_yellow_rust">
+                  <span class="text-lg">🌾</span>
+                  <span>Wheat</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="rice" data-disease="rice_blast">
+                  <span class="text-lg">🌾</span>
+                  <span>Rice</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="cotton" data-disease="cotton_bacterial_blight">
+                  <span class="text-lg">☁️</span>
+                  <span>Cotton</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="maize" data-disease="corn_common_rust">
+                  <span class="text-lg">🌽</span>
+                  <span>Corn</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="groundnut" data-disease="groundnut_tikka">
+                  <span class="text-lg">🥜</span>
+                  <span>Groundnut</span>
+                </button>
+                <button class="crop-btn px-2 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 text-xs font-medium flex flex-col items-center gap-1 transition text-slate-300" data-crop="healthy" data-disease="healthy_crop">
+                  <span class="text-lg">🌱</span>
+                  <span>Healthy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Drag and Drop Zone -->
+            <div id="dropZone" class="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-6 text-center cursor-pointer transition bg-slate-900/50 hover:bg-slate-900 group relative">
+              <input type="file" id="fileInput" accept="image/*" class="hidden">
+              <div class="flex flex-col items-center space-y-2">
+                <div class="w-12 h-12 rounded-full bg-slate-800 group-hover:bg-brand-500/20 text-brand-400 flex items-center justify-center transition">
+                  <i data-lucide="cloud-upload" class="w-6 h-6"></i>
+                </div>
+                <p class="text-sm font-semibold text-white" id="dropzoneText">Drag & Drop Leaf Photo or Click to Browse</p>
+                <p class="text-xs text-slate-400">Supports JPG, PNG, WEBP (Max 10MB)</p>
+              </div>
+            </div>
+
+            <!-- Action Buttons (Camera + Browse) -->
+            <div class="grid grid-cols-2 gap-3">
+              <button id="btnOpenCam" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center justify-center gap-2 transition">
+                <i data-lucide="camera" class="w-4 h-4 text-emerald-400"></i>
+                <span id="btnCamText">Use Live Camera</span>
+              </button>
+              <button id="btnBrowseFile" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-semibold text-white flex items-center justify-center gap-2 transition shadow-lg shadow-brand-600/20">
+                <i data-lucide="folder-open" class="w-4 h-4"></i>
+                <span id="btnBrowseText">Choose File</span>
+              </button>
+            </div>
+
+            <!-- Quick Sample Testing Chips (1-Click Demo) -->
+            <div class="pt-2 border-t border-slate-800/80">
+              <p class="text-xs text-slate-400 font-medium mb-2 flex items-center gap-1.5" id="samplePrompt">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Instant Test Samples (1-क्लिक टेस्ट नमूने):</span>
+              </p>
+              <div class="flex flex-wrap gap-1.5" id="sampleChipsContainer">
+                <button class="sample-chip text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-crop="tomato" data-disease="tomato_early_blight">
+                  🍅 Tomato Early Blight
+                </button>
+                <button class="sample-chip text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-crop="potato" data-disease="potato_late_blight">
+                  🥔 Potato Late Blight
+                </button>
+                <button class="sample-chip text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-crop="wheat" data-disease="wheat_yellow_rust">
+                  🌾 Wheat Yellow Rust
+                </button>
+                <button class="sample-chip text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-crop="groundnut" data-disease="groundnut_tikka">
+                  🥜 Groundnut Tikka
+                </button>
+                <button class="sample-chip text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-crop="healthy" data-disease="healthy_crop">
+                  🌱 Healthy Leaf
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: IMAGE PROCESSING & INTERACTIVE CANVAS -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="font-bold text-base text-white flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">2</span>
+                <span id="step2Title">Image Processing & Heatmap</span>
+              </h2>
+              <div class="flex items-center gap-2">
+                <label class="inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggleHeatmap" checked class="sr-only peer">
+                  <div class="w-8 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                  <span class="ml-1.5 text-xs text-slate-300" id="lblHeatmap">Heatmap</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Canvas View Container -->
+            <div class="relative w-full aspect-square max-h-[380px] bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+              <canvas id="imageCanvas" class="w-full h-full object-contain"></canvas>
+              <div id="scanLaser" class="scan-laser hidden"></div>
+              <div id="hotspotLayer" class="absolute inset-0 pointer-events-auto"></div>
+              <div id="canvasPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 space-y-2 p-4 text-center">
+                <i data-lucide="image" class="w-12 h-12 stroke-[1.5]"></i>
+                <p class="text-xs">No image loaded. Please upload or choose a sample above.</p>
+              </div>
+            </div>
+
+            <!-- Visual Diagnostic Filters -->
+            <div>
+              <p class="text-xs text-slate-400 font-medium mb-1.5" id="lblFilters">Visual Diagnostic Filters / दृश्य फ़िल्टर:</p>
+              <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
+                <button class="filter-btn active py-1.5 px-1 rounded-lg bg-brand-600 text-white border border-brand-500" data-filter="original">
+                  Original
+                </button>
+                <button class="filter-btn py-1.5 px-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-filter="ndvi">
+                  NDVI Thermal
+                </button>
+                <button class="filter-btn py-1.5 px-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-filter="edge">
+                  Edge Detect
+                </button>
+                <button class="filter-btn py-1.5 px-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700" data-filter="grayscale">
+                  Grayscale
+                </button>
+              </div>
+            </div>
+
+            <!-- Metrics Pill -->
+            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+              <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
+                <span class="text-slate-400 block text-[10px]" id="lblInfectedArea">Infected Area</span>
+                <span class="font-bold text-amber-400 text-sm" id="metricInfectedPct">-- %</span>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
+                <span class="text-slate-400 block text-[10px]" id="lblLesionsCount">Lesions Detected</span>
+                <span class="font-bold text-red-400 text-sm" id="metricHotspots">--</span>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
+                <span class="text-slate-400 block text-[10px]" id="lblPlantHealth">Plant Health</span>
+                <span class="font-bold text-emerald-400 text-sm" id="metricHealthStatus">Pending</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: AI Disease Detection, Advisory Tabs, Weather/Soil, Market Forecast (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- STEP 3 & 7: PRIMARY AI DIAGNOSIS & VOICE SUMMARY CARD -->
+          <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden" id="diagnosisCard">
+            
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center space-x-2">
+                <span class="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">3</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-400" id="lblAiDiagnosticTitle">AI Diagnostic Result (रोग निदान)</span>
+              </div>
+              
+              <div class="flex items-center space-x-2">
+                <span id="badgeSeverity" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Moderate Severity
+                </span>
+                <span id="badgeConfidence" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  96.4% Confidence
+                </span>
+              </div>
+            </div>
+
+            <!-- Main Disease Name Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+              <div>
+                <h3 class="text-xl sm:text-2xl font-extrabold text-white" id="diagDiseaseName">
+                  Early Blight (Alternaria solani)
+                </h3>
+                <p class="text-sm font-semibold text-brand-300" id="diagDiseaseHindi">
+                  अगेती झुलसा (अर्ली ब्लाइट)
+                </p>
+                <p class="text-xs text-slate-400 mt-1" id="diagPathogenType">
+                  Pathogen: Fungal (फफूंद जनित) • Target Crop: Tomato (टमाटर)
+                </p>
+              </div>
+
+              <!-- Action Bar (Voice + Health Card + WhatsApp Share) -->
+              <div class="flex flex-wrap items-center gap-2">
+                <!-- Voice Button (Kisan Vani) -->
+                <button id="btnVoiceReadout" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-brand-500/20">
+                  <i data-lucide="volume-2" class="w-4 h-4"></i>
+                  <span id="btnVoiceText">Kisan Vani (सुनें)</span>
+                </button>
+
+                <!-- Print Health Card -->
+                <button id="btnPrintHealthCard" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-semibold flex items-center gap-1.5 transition" title="Print Kisan Crop Health Card">
+                  <i data-lucide="printer" class="w-4 h-4 text-brand-400"></i>
+                  <span id="btnPrintText">Health Card</span>
+                </button>
+
+                <!-- WhatsApp Share Button -->
+                <button id="btnShareWhatsApp" class="px-3 py-2 rounded-xl bg-emerald-900/60 hover:bg-emerald-800/80 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition" title="Share Prescription on WhatsApp">
+                  <i data-lucide="share-2" class="w-4 h-4 text-emerald-400"></i>
+                  <span>WhatsApp</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Key Symptoms Breakdown -->
+            <div class="mt-4 space-y-2">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5" id="lblSymptoms">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Observed Diagnostic Symptoms (लक्षण):</span>
+              </h4>
+              <ul id="diagSymptomsList" class="space-y-1.5 text-xs text-slate-300 list-disc list-inside bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                <li>Concentric dark brown 'bullseye' rings on older leaves.</li>
+                <li>Yellow halo surrounding brown necrotic spots.</li>
+                <li>Premature defoliation starting from lower foliage upward.</li>
+              </ul>
+            </div>
+
+          </div>
+
+          <!-- 3-TAB INTERACTIVE ADVISORY SUITE -->
+          <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+            
+            <!-- TAB HEADERS -->
+            <div class="flex border-b border-slate-800 bg-slate-900/80 text-xs font-bold">
+              <button class="tab-btn active flex-1 py-3 px-3 text-center border-b-2 border-brand-500 text-brand-400 bg-slate-800/50 flex items-center justify-center gap-1.5 transition" data-tab="tab-treatments">
+                <i data-lucide="pill" class="w-4 h-4"></i>
+                <span id="tabTitleTreatments">5. Fertilizers & Treatments</span>
+              </button>
+              <button class="tab-btn flex-1 py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition" data-tab="tab-weather-soil">
+                <i data-lucide="cloud-rain" class="w-4 h-4"></i>
+                <span id="tabTitleWeatherSoil">4. Weather & Soil Analysis</span>
+              </button>
+              <button class="tab-btn flex-1 py-3 px-3 text-center border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition" data-tab="tab-market">
+                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                <span id="tabTitleMarket">6. Market Price Prediction</span>
+              </button>
+            </div>
+
+            <!-- TAB CONTENT PANELS -->
+            <div class="p-5">
+
+              <!-- ================= TAB 1: TREATMENTS & DOSAGE CALCULATOR ================= -->
+              <div id="tab-treatments" class="tab-panel space-y-5">
+                
+                <!-- 3-Tier Treatment Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                  
+                  <div class="rounded-xl bg-slate-900/80 border border-red-500/20 p-4 space-y-2">
+                    <div class="flex items-center gap-1.5 text-red-400 font-bold">
+                      <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                      <span id="lblChemical">Chemical Pesticides</span>
+                    </div>
+                    <ul id="treatmentChemical" class="space-y-2 text-slate-300"></ul>
+                  </div>
+
+                  <div class="rounded-xl bg-slate-900/80 border border-emerald-500/20 p-4 space-y-2">
+                    <div class="flex items-center gap-1.5 text-emerald-400 font-bold">
+                      <i data-lucide="leaf" class="w-4 h-4"></i>
+                      <span id="lblOrganic">Organic / Bio Remedies</span>
+                    </div>
+                    <ul id="treatmentOrganic" class="space-y-2 text-slate-300"></ul>
+                  </div>
+
+                  <div class="rounded-xl bg-slate-900/80 border border-blue-500/20 p-4 space-y-2">
+                    <div class="flex items-center gap-1.5 text-blue-400 font-bold">
+                      <i data-lucide="shield" class="w-4 h-4"></i>
+                      <span id="lblPreventive">Preventive Farm Practices</span>
+                    </div>
+                    <ul id="treatmentPreventive" class="space-y-2 text-slate-300"></ul>
+                  </div>
+
+                </div>
+
+                <!-- Dosage & Spray Tank Calculator -->
+                <div class="rounded-xl bg-gradient-to-br from-slate-900 to-slate-800/90 border border-brand-500/30 p-4 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-brand-300 flex items-center gap-1.5" id="lblDosageCalcTitle">
+                      <i data-lucide="calculator" class="w-4 h-4 text-brand-400"></i>
+                      <span>Smart Spray Tank & Fertilizer Dosage Calculator</span>
+                    </h4>
+                    <span class="text-[10px] text-slate-400" id="lblCalcFormula">180L Water / Acre Standard</span>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <label class="block text-slate-400 mb-1" id="lblAcres">Land Area (Acres):</label>
+                      <input type="number" id="calcAcres" value="2" min="0.5" max="50" step="0.5" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:border-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                      <label class="block text-slate-400 mb-1" id="lblTankCap">Tank Capacity (L):</label>
+                      <input type="number" id="calcTankLiters" value="15" min="5" max="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:border-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                      <label class="block text-slate-400 mb-1" id="lblDoseL">Dose (g or ml / L):</label>
+                      <input type="number" id="calcDosePerL" value="2.5" min="0.1" max="20" step="0.1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white focus:border-brand-500 focus:outline-none">
+                    </div>
+                    <div class="flex items-end">
+                      <button id="btnRecalculateDosage" class="w-full py-1.5 px-3 rounded-lg bg-brand-600 hover:bg-brand-500 font-semibold text-white transition">
+                        Calculate
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Output Cards -->
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800 text-center text-xs">
+                    <div class="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
+                      <span class="text-slate-400 block text-[10px]" id="lblResWater">Total Water</span>
+                      <span class="font-bold text-white text-sm" id="resTotalWater">360 L</span>
+                    </div>
+                    <div class="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
+                      <span class="text-slate-400 block text-[10px]" id="lblResChemical">Total Chemical</span>
+                      <span class="font-bold text-amber-400 text-sm" id="resTotalChemical">900 g</span>
+                    </div>
+                    <div class="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
+                      <span class="text-slate-400 block text-[10px]" id="lblResTanks">Tanks Needed</span>
+                      <span class="font-bold text-emerald-400 text-sm" id="resTanksCount">~24 Tanks (15L)</span>
+                    </div>
+                    <div class="bg-slate-950/70 p-2 rounded-lg border border-slate-800">
+                      <span class="text-slate-400 block text-[10px]" id="lblResPerTank">Per Tank Dose</span>
+                      <span class="font-bold text-brand-300 text-sm" id="resPerTank">37.5 g / Tank</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ================= TAB 2: WEATHER & SOIL ANALYSIS ================= -->
+              <div id="tab-weather-soil" class="tab-panel hidden space-y-5">
+                
+                <div class="rounded-xl bg-slate-900/80 border border-slate-800 p-4 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5" id="lblRiskMeterTitle">
+                      <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+                      <span>Micro-Climate Disease Propagation Risk (रोग विस्तार खतरा)</span>
+                    </h4>
+                    <span id="riskScoreBadge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-red-500/20 text-red-300 border border-red-500/30">
+                      High Risk (78%)
+                    </span>
+                  </div>
+
+                  <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
+                    <div id="riskScoreBar" class="bg-gradient-to-r from-emerald-500 via-amber-500 to-red-500 h-full rounded-full transition-all duration-700" style="width: 78%;"></div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-300">
+                    <div id="weatherRiskFactors" class="space-y-1 bg-slate-950/60 p-3 rounded-lg border border-slate-800/80"></div>
+                    <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80 space-y-1.5">
+                      <span class="font-bold text-brand-400 block" id="lblSprayWindow">Recommended Spray Window (छिड़काव समय):</span>
+                      <p id="weatherSprayWindow" class="text-slate-300">Spray fungicides within 24-48 hours before the expected rain window.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <i data-lucide="thermometer" class="w-5 h-5 mx-auto text-orange-400 mb-1"></i>
+                    <span class="text-slate-400 block text-[10px]" id="lblTemp">Temperature</span>
+                    <span class="font-bold text-white text-sm" id="cardTemp">27.5°C</span>
+                  </div>
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <i data-lucide="droplets" class="w-5 h-5 mx-auto text-blue-400 mb-1"></i>
+                    <span class="text-slate-400 block text-[10px]" id="lblHumidity">Humidity</span>
+                    <span class="font-bold text-white text-sm" id="cardHumidity">78%</span>
+                  </div>
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <i data-lucide="cloud-rain" class="w-5 h-5 mx-auto text-cyan-400 mb-1"></i>
+                    <span class="text-slate-400 block text-[10px]" id="lblRainChance">Rain Chance</span>
+                    <span class="font-bold text-white text-sm" id="cardRainChance">35%</span>
+                  </div>
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <i data-lucide="wind" class="w-5 h-5 mx-auto text-emerald-400 mb-1"></i>
+                    <span class="text-slate-400 block text-[10px]" id="lblWind">Wind Speed</span>
+                    <span class="font-bold text-white text-sm" id="cardWind">12.4 km/h</span>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-slate-900/80 border border-slate-800 p-4 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5" id="lblSoilTitle">
+                      <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
+                      <span>Soil Health & NPK Nutrients Status (मृदा स्वास्थ्य)</span>
+                    </h4>
+                    <span class="text-[10px] text-slate-400">Optimal Range: pH 6.0 - 7.0</span>
+                  </div>
+
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                      <span class="text-slate-400 block text-[10px]">Soil pH</span>
+                      <span class="font-bold text-emerald-400 text-sm">6.5 (Optimal)</span>
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                      <span class="text-slate-400 block text-[10px]">Nitrogen (N)</span>
+                      <span class="font-bold text-blue-400 text-sm">180 kg/ha</span>
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                      <span class="text-slate-400 block text-[10px]">Phosphorus (P)</span>
+                      <span class="font-bold text-amber-400 text-sm">28 kg/ha</span>
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                      <span class="text-slate-400 block text-[10px]">Potassium (K)</span>
+                      <span class="font-bold text-purple-400 text-sm">240 kg/ha</span>
+                    </div>
+                  </div>
+
+                  <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800/80 text-xs text-slate-300 space-y-1">
+                    <p class="font-semibold text-brand-400" id="lblSoilAdvisoryHeading">Soil Management Recommendation:</p>
+                    <ul id="soilAdvisories" class="list-disc list-inside space-y-1 text-slate-300">
+                      <li>Soil pH (6.5) is ideal for tomato nutrient bioavailability.</li>
+                      <li>Soil moisture level (62%) is balanced. Continue drip irrigation every 3 days.</li>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- ================= TAB 3: MARKET PRICE PREDICTION & MANDI TRENDS ================= -->
+              <div id="tab-market" class="tab-panel hidden space-y-5">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[10px]" id="lblCurrPrice">Current Benchmark Rate</span>
+                    <span class="font-bold text-white text-lg" id="marketCurrPrice">₹2,450 / Quintal</span>
+                    <span class="text-emerald-400 text-[10px] block mt-0.5" id="marketTrendPct">▲ Bullish (+12% this month)</span>
+                  </div>
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[10px]" id="lblMspPrice">Govt MSP / Floor Benchmark</span>
+                    <span class="font-bold text-amber-300 text-lg" id="marketMspPrice">₹1,900 / Quintal</span>
+                    <span class="text-slate-400 text-[10px] block mt-0.5">APMC Baseline Support</span>
+                  </div>
+                  <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[10px]" id="lblYieldSaved">Yield Value Saved by Early Action</span>
+                    <span class="font-bold text-emerald-400 text-lg" id="marketYieldSaved">₹49,980 / 2 Acres</span>
+                    <span class="text-slate-400 text-[10px] block mt-0.5">Estimated economic recovery</span>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-slate-900/80 border border-slate-800 p-4 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5" id="lblChartHeading">
+                      <i data-lucide="line-chart" class="w-4 h-4 text-brand-400"></i>
+                      <span>30-Day Historical Trend & 15-Day AI Price Forecast (मंडी भाव पूर्वानुमान)</span>
+                    </h4>
+                    <span class="text-[10px] text-brand-400 font-semibold">Live APMC Aggregator</span>
+                  </div>
+                  <div class="h-56 w-full">
+                    <canvas id="marketChart"></canvas>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-slate-900/80 border border-slate-800 p-4 space-y-2">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400" id="lblTopMandis">
+                    Top Mandi Spot Rates (प्रमुख मंडियां):
+                  </h4>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left text-slate-300">
+                      <thead class="text-[10px] uppercase text-slate-400 bg-slate-950/60 border-b border-slate-800">
+                        <tr>
+                          <th class="py-2 px-3">Mandi / Market</th>
+                          <th class="py-2 px-3">State</th>
+                          <th class="py-2 px-3">Modal Rate (₹/Qtl)</th>
+                          <th class="py-2 px-3">Daily Arrival</th>
+                        </tr>
+                      </thead>
+                      <tbody id="topMandisTableBody" class="divide-y divide-slate-800/60"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= PAGE 2: FULL MANDI INTELLIGENCE ================= -->
+    <div id="page-mandi" class="page-view hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-6 h-6 text-brand-400"></i>
+              <span>National APMC Mandi Intelligence & Price Analytics</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Real-time daily modal arrivals, MSP floor benchmarks, and 15-day AI commodity price forecasts.</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+            e-NAM & Agmarknet Synced
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Wheat (गेहूं)</span>
+            <p class="text-xl font-black text-white mt-1">₹2,580 / Qtl</p>
+            <span class="text-xs text-emerald-400">▲ +8% (High Demand)</span>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Paddy / Rice (धान)</span>
+            <p class="text-xl font-black text-white mt-1">₹3,200 / Qtl</p>
+            <span class="text-xs text-emerald-400">▲ +6% (Export Rush)</span>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Cotton (कपास)</span>
+            <p class="text-xl font-black text-white mt-1">₹7,450 / Qtl</p>
+            <span class="text-xs text-emerald-400">▲ +4% (Mill Buying)</span>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Mustard (सरसों)</span>
+            <p class="text-xl font-black text-white mt-1">₹5,650 / Qtl</p>
+            <span class="text-xs text-emerald-400">▲ +7% (Oil Strength)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE 3: WEATHER & SOIL STATION ================= -->
+    <div id="page-weather" class="page-view hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="cloud-rain" class="w-6 h-6 text-cyan-400"></i>
+          <span>Agro-Meteorology & Soil Moisture Observation Station</span>
+        </h2>
+        <p class="text-xs text-slate-400">Micro-climate humidity index, dew point monitoring, and crop-specific soil remediation guidance.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-xs font-bold text-amber-300 uppercase">Fungal Spore Proliferation</h4>
+            <p class="text-sm text-slate-300">Relative Humidity > 78% creates high infection pressure for Solanaceous and Cereal foliar pathogens.</p>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-xs font-bold text-emerald-300 uppercase">Ideal Spray Temperature</h4>
+            <p class="text-sm text-slate-300">22°C - 28°C with wind speed &lt; 15 km/h is optimal for uniform droplet adhesion and zero drift.</p>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-xs font-bold text-blue-300 uppercase">Soil pH Buffering</h4>
+            <p class="text-sm text-slate-300">Apply Gypsum for alkali soils (pH &gt; 8) or Agricultural Lime for acidic soils (pH &lt; 6) at 200kg/acre.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE 4: ADVANCED PRECISION DOSAGE ================= -->
+    <div id="page-dosage" class="page-view hidden space-y-6">
+      
+      <!-- HEADER BANNER & SYNC BAR -->
+      <div class="rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border border-brand-500/30 p-5 shadow-xl relative overflow-hidden">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
+              <i data-lucide="calculator" class="w-6 h-6 text-brand-400"></i>
+              <span id="advDosageHeaderTitle">Precision Multi-Sprayer & Fertilizer Calculator</span>
+            </h2>
+            <p class="text-xs text-slate-300 mt-1 max-w-3xl" id="advDosageHeaderSubtitle">
+              Compute exact water volumes, chemical gram/ml dosages, tank refill cycles, application time, and total cost across Knapsack, Tractor Boom, Agri-Drone ULV, and Fertigation systems.
+            </p>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btnAdvSyncDoctor" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 transition shadow-lg shadow-brand-500/20">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+              <span id="btnAdvSyncText">Sync with Active Diagnosis</span>
+            </button>
+            <button id="btnAdvReset" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span id="btnAdvResetText">Reset</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Active Crop & Disease Banner Notification if synced -->
+        <div id="advSyncBanner" class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-brand-300">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="advSyncBannerText">Active Target Crop: <strong>Tomato (टमाटर)</strong> • Target Problem: <strong>Early Blight</strong> • Standard Dose: <strong>2.5 g/L</strong></span>
+          </div>
+          <span class="text-[11px] text-slate-400 hidden sm:inline">ICAR & CIBRC Calibrated</span>
+        </div>
+      </div>
+
+      <!-- MAIN 2-COLUMN DOSAGE WORKBENCH -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN: Inputs & Equipment Configuration (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- 1. SPRAYER EQUIPMENT SELECTOR -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+              <span id="advLblSprayerType">Select Spraying Equipment / स्प्रे उपकरण:</span>
+            </h3>
+
+            <!-- 4 Sprayer Presets Grid -->
+            <div class="grid grid-cols-2 gap-2" id="advSprayerGrid">
+              <button class="adv-sprayer-btn active p-3 rounded-xl bg-slate-800 hover:bg-brand-950/40 border border-brand-500/50 text-left transition flex flex-col justify-between" data-spray="knapsack" data-tank="15" data-water-per-acre="180">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">🎒</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-300 font-bold border border-brand-500/30">15L - 20L</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-white">Manual / Battery Knapsack</p>
+                  <p class="text-[10px] text-slate-400">हैंड / बैटरी स्प्रे पंप (180L/Acre)</p>
+                </div>
+              </button>
+
+              <button class="adv-sprayer-btn p-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-left transition flex flex-col justify-between" data-spray="tractor" data-tank="200" data-water-per-acre="250">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">🚜</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">200L - 500L</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-slate-300">Tractor Boom Sprayer</p>
+                  <p class="text-[10px] text-slate-400">ट्रैक्टर बूम स्प्रेयर (250L/Acre)</p>
+                </div>
+              </button>
+
+              <button class="adv-sprayer-btn p-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-left transition flex flex-col justify-between" data-spray="drone" data-tank="10" data-water-per-acre="10">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">🛸</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">10L ULV</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-slate-300">Agri-Drone ULV Aerial</p>
+                  <p class="text-[10px] text-slate-400">ड्रोन छिड़काव (10L ULV/Acre)</p>
+                </div>
+              </button>
+
+              <button class="adv-sprayer-btn p-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-left transition flex flex-col justify-between" data-spray="drip" data-tank="500" data-water-per-acre="500">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xl">💧</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">500L Tank</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-slate-300">Drip / Fertigation System</p>
+                  <p class="text-[10px] text-slate-400">ड्रिप वेंचुरी फर्टिगेशन (500L/Acre)</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. FARM AREA & TANK CAPACITY CONFIGURATION -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">2</span>
+              <span id="advLblFarmConfig">Farm Area & Tank Configuration:</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <!-- Land Area Input & Unit -->
+              <div>
+                <label class="block text-slate-400 mb-1 font-medium" id="advLblArea">Land Area / क्षेत्रफल:</label>
+                <div class="flex rounded-lg overflow-hidden border border-slate-700 bg-slate-950 focus-within:border-brand-500">
+                  <input type="number" id="advCalcAcres" value="2.0" min="0.1" max="500" step="0.5" class="w-full bg-transparent px-3 py-2 text-white text-sm font-semibold focus:outline-none">
+                  <select id="advAreaUnit" class="bg-slate-900 text-slate-300 px-2.5 py-2 text-xs border-l border-slate-700 focus:outline-none cursor-pointer">
+                    <option value="acres" selected>Acres (एकड़)</option>
+                    <option value="hectares">Hectares (हेक्टेयर)</option>
+                    <option value="bigha">Bigha (बीघा)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Tank Capacity Input & Presets -->
+              <div>
+                <label class="block text-slate-400 mb-1 font-medium" id="advLblTankCapacity">Tank Capacity / टंकी क्षमता (L):</label>
+                <div class="relative">
+                  <input type="number" id="advCalcTankLiters" value="15" min="2" max="5000" step="1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm font-semibold focus:border-brand-500 focus:outline-none">
+                  <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">Liters</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Tank Preset Chips -->
+            <div class="flex items-center gap-1.5 flex-wrap pt-1">
+              <span class="text-[10px] text-slate-400 font-medium mr-1">Quick Tank:</span>
+              <button class="adv-tank-chip text-[11px] px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-liters="10">10L (Drone)</button>
+              <button class="adv-tank-chip text-[11px] px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-liters="15">15L (Knapsack)</button>
+              <button class="adv-tank-chip text-[11px] px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-liters="20">20L (Battery)</button>
+              <button class="adv-tank-chip text-[11px] px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-liters="200">200L (Tractor Drum)</button>
+              <button class="adv-tank-chip text-[11px] px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" data-liters="500">500L (Commercial)</button>
+            </div>
+          </div>
+
+          <!-- 3. PRODUCT & CHEMICAL DOSAGE CONFIGURATION -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
+            <h3 class="font-bold text-sm text-white flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">3</span>
+              <span id="advLblProductConfig">Chemical / Fertilizer Prescription:</span>
+            </h3>
+
+            <!-- Product Category & Quick Select -->
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-slate-400 mb-1 font-medium" id="advLblSelectProduct">Select Product Preset / दवा या खाद चुनें:</label>
+                <select id="advProductSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+                  <optgroup label="Fungicides (फफूंदनाशी)">
+                    <option value="mancozeb" data-name="Mancozeb 75% WP" data-dose="2.5" data-unit="g" data-cost="550" selected>Mancozeb 75% WP (Contact) - 2.5 g/L</option>
+                    <option value="azoxystrobin" data-name="Azoxystrobin 23% SC" data-dose="1.0" data-unit="ml" data-cost="2400">Azoxystrobin 23% SC (Systemic) - 1.0 ml/L</option>
+                    <option value="propiconazole" data-name="Propiconazole 25% EC" data-dose="1.0" data-unit="ml" data-cost="1600">Propiconazole 25% EC (Tilt) - 1.0 ml/L</option>
+                    <option value="copper_oxychloride" data-name="Copper Oxychloride 50% WP" data-dose="3.0" data-unit="g" data-cost="680">Copper Oxychloride 50% WP - 3.0 g/L</option>
+                    <option value="metalaxyl" data-name="Metalaxyl 8% + Mancozeb 64% WP" data-dose="2.5" data-unit="g" data-cost="1400">Metalaxyl 8% + Mancozeb 64% WP - 2.5 g/L</option>
+                    <option value="tricyclazole" data-name="Tricyclazole 75% WP" data-dose="0.6" data-unit="g" data-cost="1900">Tricyclazole 75% WP (Rice Blast) - 0.6 g/L</option>
+                    <option value="hexaconazole" data-name="Hexaconazole 5% EC" data-dose="2.0" data-unit="ml" data-cost="650">Hexaconazole 5% EC (Contaf) - 2.0 ml/L</option>
+                  </optgroup>
+                  <optgroup label="Insecticides & Vectors (कीटनाशक)">
+                    <option value="imidacloprid" data-name="Imidacloprid 17.8% SL" data-dose="0.5" data-unit="ml" data-cost="1800">Imidacloprid 17.8% SL (Whitefly/Aphids) - 0.5 ml/L</option>
+                    <option value="diafenthiuron" data-name="Diafenthiuron 50% WP" data-dose="1.2" data-unit="g" data-cost="2200">Diafenthiuron 50% WP (Mites/Thrips) - 1.2 g/L</option>
+                    <option value="acetamiprid" data-name="Acetamiprid 20% SP" data-dose="0.3" data-unit="g" data-cost="1500">Acetamiprid 20% SP - 0.3 g/L</option>
+                    <option value="emamectin" data-name="Emamectin Benzoate 5% SG" data-dose="0.4" data-unit="g" data-cost="3200">Emamectin Benzoate 5% SG (Bollworm) - 0.4 g/L</option>
+                  </optgroup>
+                  <optgroup label="Bio & Organic Remedies (जैविक उपचार)">
+                    <option value="neem_oil" data-name="Cold-Pressed Neem Oil (10,000 ppm)" data-dose="5.0" data-unit="ml" data-cost="450">Cold-Pressed Neem Oil 10,000 ppm - 5.0 ml/L</option>
+                    <option value="trichoderma" data-name="Trichoderma viride Bio-Fungicide" data-dose="5.0" data-unit="g" data-cost="220">Trichoderma viride - 5.0 g/L</option>
+                    <option value="jeevamrutha" data-name="Fermented Jeevamrutha" data-dose="100.0" data-unit="ml" data-cost="50">Jeevamrutha (10% Solution) - 100 ml/L</option>
+                  </optgroup>
+                  <optgroup label="Water-Soluble Fertilizers (घुलनशील खाद NPK)">
+                    <option value="npk_19" data-name="NPK 19:19:19 (Water Soluble)" data-dose="5.0" data-unit="g" data-cost="180">NPK 19:19:19 (Balanced Growth) - 5.0 g/L</option>
+                    <option value="potassium_nitrate" data-name="Potassium Nitrate 13:0:45" data-dose="10.0" data-unit="g" data-cost="240">Potassium Nitrate 13:0:45 (Fruit Booster) - 10.0 g/L</option>
+                    <option value="calcium_nitrate" data-name="Calcium Nitrate + Boron" data-dose="5.0" data-unit="g" data-cost="120">Calcium Nitrate + Boron - 5.0 g/L</option>
+                    <option value="zinc_micronutrient" data-name="Chelated Zinc EDTA (12%)" data-dose="1.0" data-unit="g" data-cost="550">Chelated Zinc EDTA 12% - 1.0 g/L</option>
+                    <option value="urea_foliar" data-name="Urea Foliar Spray (Low Biuret)" data-dose="15.0" data-unit="g" data-cost="35">Urea Foliar (1.5% Concentration) - 15.0 g/L</option>
+                  </optgroup>
+                  <optgroup label="Custom Formulation (अन्य दवा)">
+                    <option value="custom" data-name="Custom Formulation" data-dose="2.0" data-unit="g" data-cost="800">Custom Chemical / Fertilizer...</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <!-- Product Name & Dose per Liter Input -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-400 mb-1 font-medium" id="advLblProdName">Product Name / उत्पाद का नाम:</label>
+                  <input type="text" id="advProductName" value="Mancozeb 75% WP" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-medium focus:border-brand-500 focus:outline-none">
+                </div>
+
+                <div>
+                  <label class="block text-slate-400 mb-1 font-medium" id="advLblDoseRate">Dose per Litre (मात्रा प्रति लीटर):</label>
+                  <div class="flex rounded-lg overflow-hidden border border-slate-700 bg-slate-950 focus-within:border-brand-500">
+                    <input type="number" id="advCalcDosePerL" value="2.5" min="0.05" max="150" step="0.1" class="w-full bg-transparent px-3 py-2 text-white text-sm font-semibold focus:outline-none">
+                    <select id="advProductUnit" class="bg-slate-900 text-slate-300 px-2.5 py-2 text-xs border-l border-slate-700 focus:outline-none cursor-pointer">
+                      <option value="g" selected>grams / L</option>
+                      <option value="ml">ml / L</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Spray Rounds & Estimated Unit Cost -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-400 mb-1 font-medium" id="advLblSprayRounds">Spray Applications / छिड़काव चक्र:</label>
+                  <select id="advSprayRounds" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-brand-500 focus:outline-none">
+                    <option value="1" selected>1 Single Application (1 बार)</option>
+                    <option value="2">2 Applications (10-14 days interval)</option>
+                    <option value="3">3 Complete Crop Cycles (3 बार)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-slate-400 mb-1 font-medium" id="advLblUnitCost">Estimated Rate (₹ / Kg or L):</label>
+                  <div class="relative">
+                    <span class="absolute left-3 top-2 text-xs text-slate-400 font-bold">₹</span>
+                    <input type="number" id="advUnitCost" value="550" min="0" max="25000" step="10" class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-7 pr-3 py-2 text-white text-sm font-semibold focus:border-brand-500 focus:outline-none">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Calculate Action Button -->
+              <div class="pt-2">
+                <button id="btnAdvCalculateDosage" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-brand-600/30">
+                  <i data-lucide="calculator" class="w-4 h-4"></i>
+                  <span id="btnAdvCalculateText">Calculate Precise Tank Dosage (सटीक गणना करें)</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Output Dashboard, Mixing Guide & Safety Advisory (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- 4 PRIMARY METRICS TILES -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 text-center relative overflow-hidden">
+              <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mx-auto mb-2">
+                <i data-lucide="droplet" class="w-4 h-4"></i>
+              </div>
+              <span class="text-slate-400 block text-[11px] font-medium" id="advLblResWater">Total Water Required</span>
+              <span class="font-extrabold text-white text-lg sm:text-xl block mt-0.5" id="advResTotalWater">360 Liters</span>
+              <span class="text-[10px] text-blue-400 font-semibold" id="advResWaterFormula">180 L / Acre</span>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 text-center relative overflow-hidden">
+              <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-2">
+                <i data-lucide="flask-conical" class="w-4 h-4"></i>
+              </div>
+              <span class="text-slate-400 block text-[11px] font-medium" id="advLblResProduct">Total Product Needed</span>
+              <span class="font-extrabold text-amber-400 text-lg sm:text-xl block mt-0.5" id="advResTotalChemical">900 grams</span>
+              <span class="text-[10px] text-amber-300 font-semibold" id="advResProductKg">0.900 kg</span>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 text-center relative overflow-hidden">
+              <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2">
+                <i data-lucide="boxes" class="w-4 h-4"></i>
+              </div>
+              <span class="text-slate-400 block text-[11px] font-medium" id="advLblResTanks">Tank Fills Required</span>
+              <span class="font-extrabold text-emerald-400 text-lg sm:text-xl block mt-0.5" id="advResTanksCount">24 Tanks</span>
+              <span class="text-[10px] text-emerald-300 font-semibold" id="advResTankSubtext">15L Capacity / Tank</span>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 border border-slate-800 text-center relative overflow-hidden">
+              <div class="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center mx-auto mb-2">
+                <i data-lucide="scale" class="w-4 h-4"></i>
+              </div>
+              <span class="text-slate-400 block text-[11px] font-medium" id="advLblResPerTank">Dose per Tank</span>
+              <span class="font-extrabold text-purple-300 text-lg sm:text-xl block mt-0.5" id="advResPerTank">37.5 grams</span>
+              <span class="text-[10px] text-slate-400" id="advResPerTankCap">~2.5 standard caps</span>
+            </div>
+
+          </div>
+
+          <!-- SECONDARY FINANCIAL & SPRAY TIMING SUMMARY -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-brand-300 flex items-center gap-1.5" id="advLblEconomicsTitle">
+                <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-400"></i>
+                <span>Economic Investment & Application Time Forecast</span>
+              </h4>
+              <span class="text-[11px] text-slate-400">Field Efficiency Optimizer</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px]" id="advLblTotalCost">Total Chemical Investment</span>
+                <span class="font-extrabold text-white text-base block mt-0.5" id="advResTotalCost">₹495.00</span>
+                <span class="text-[10px] text-emerald-400 font-semibold" id="advResCostPerAcre">₹247.50 / Acre</span>
+              </div>
+
+              <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px]" id="advLblTimeEst">Estimated Spray Duration</span>
+                <span class="font-extrabold text-white text-base block mt-0.5" id="advResTimeEst">~4.8 Hours</span>
+                <span class="text-[10px] text-slate-400" id="advResTimeSubtext">~2.4 hrs / acre knapsack</span>
+              </div>
+
+              <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80">
+                <span class="text-slate-400 block text-[10px]" id="advLblSticker">Recommended Spreader Sticker</span>
+                <span class="font-extrabold text-cyan-300 text-base block mt-0.5" id="advResStickerDose">180 ml Silicon Sticker</span>
+                <span class="text-[10px] text-slate-400">0.5 ml / L (Rain-Fastness)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5-STEP TANK MIXING PROTOCOL -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5" id="advLblMixingTitle">
+              <i data-lucide="beaker" class="w-4 h-4 text-amber-400"></i>
+              <span>Standard 5-Step Tank Mixing Order (घोल तैयार करने का सही क्रम)</span>
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs" id="advMixingSteps">
+              <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1">
+                <div class="w-5 h-5 rounded-full bg-blue-600/30 text-blue-400 flex items-center justify-center font-bold text-[10px]">1</div>
+                <p class="font-bold text-white text-[11px]" id="advMixStep1Title">Fill 50% Water</p>
+                <p class="text-[10px] text-slate-400" id="advMixStep1Desc">Fill clean water (pH 6.0-7.0) in half tank.</p>
+              </div>
+
+              <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1">
+                <div class="w-5 h-5 rounded-full bg-amber-600/30 text-amber-400 flex items-center justify-center font-bold text-[10px]">2</div>
+                <p class="font-bold text-white text-[11px]" id="advMixStep2Title">Pre-Slurry WP</p>
+                <p class="text-[10px] text-slate-400" id="advMixStep2Desc">Mix WP powders in a separate bucket first.</p>
+              </div>
+
+              <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1">
+                <div class="w-5 h-5 rounded-full bg-emerald-600/30 text-emerald-400 flex items-center justify-center font-bold text-[10px]">3</div>
+                <p class="font-bold text-white text-[11px]" id="advMixStep3Title">Add Liquids SC/EC</p>
+                <p class="text-[10px] text-slate-400" id="advMixStep3Desc">Pour liquid concentrates while stirring.</p>
+              </div>
+
+              <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1">
+                <div class="w-5 h-5 rounded-full bg-cyan-600/30 text-cyan-400 flex items-center justify-center font-bold text-[10px]">4</div>
+                <p class="font-bold text-white text-[11px]" id="advMixStep4Title">Silicon Sticker</p>
+                <p class="text-[10px] text-slate-400" id="advMixStep4Desc">Add 0.5ml/L spreader for rain fastness.</p>
+              </div>
+
+              <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1">
+                <div class="w-5 h-5 rounded-full bg-purple-600/30 text-purple-400 flex items-center justify-center font-bold text-[10px]">5</div>
+                <p class="font-bold text-white text-[11px]" id="advMixStep5Title">Top Up & Agitate</p>
+                <p class="text-[10px] text-slate-400" id="advMixStep5Desc">Top up water to brim and spray immediately.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SAFETY & ICAR SPRAY PRECAUTIONS -->
+          <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-red-400 flex items-center gap-1.5" id="advLblSafetyTitle">
+              <i data-lucide="shield-alert" class="w-4 h-4 text-red-400"></i>
+              <span>CIBRC & ICAR Certified Spray Safety Protocols (सुरक्षा नियम)</span>
+            </h4>
+
+            <ul class="space-y-1.5 text-xs text-slate-300 list-disc list-inside bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80" id="advSafetyList">
+              <li>Wear protective nitrile gloves, eye goggles, and an N95 respirator mask during tank mixing and application.</li>
+              <li>Optimal spray window: Early morning (7-10 AM) or late afternoon (4-6 PM). Never spray during midday heat or when wind speed &gt; 15 km/h.</li>
+              <li>Never spray against prevailing wind direction to avoid chemical mist drift onto the operator.</li>
+              <li>Pre-Harvest Waiting Interval (PHI): Maintain a strict 7 to 10 days harvest safety gap post-spraying.</li>
+              <li>Dispose of empty product containers safely by triple-rinsing, puncturing, and burying away from water sources.</li>
+            </ul>
+
+            <!-- ACTION BAR: SHARE / PRINT -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+              <div class="flex items-center space-x-2">
+                <button id="btnAdvWhatsApp" class="px-4 py-2.5 rounded-xl bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-2 transition">
+                  <i data-lucide="share-2" class="w-4 h-4 text-emerald-400"></i>
+                  <span id="btnAdvWhatsAppText">Share Prescription on WhatsApp</span>
+                </button>
+                <button id="btnAdvPrint" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-semibold flex items-center gap-2 transition">
+                  <i data-lucide="printer" class="w-4 h-4 text-brand-400"></i>
+                  <span id="btnAdvPrintText">Print Dosage Sheet</span>
+                </button>
+              </div>
+
+              <div class="text-[11px] text-slate-400">
+                Helpline: <strong class="text-brand-400">1800-180-1551</strong>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= PAGE 5: DISEASE ENCYCLOPEDIA ================= -->
+    <div id="page-encyclopedia" class="page-view hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="book-open" class="w-6 h-6 text-amber-400"></i>
+              <span>Comprehensive Crop Disease Encyclopedia (रोग ज्ञानकोष)</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Diagnostic guide for 15+ agricultural diseases across Indian cash crops, cereals, and vegetables.</p>
+          </div>
+          <input type="text" id="encyclopediaSearch" placeholder="Search disease, crop, or pathogen..." class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-brand-500 w-full sm:w-72">
+        </div>
+
+        <!-- Disease Cards Grid -->
+        <div id="encyclopediaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+          <!-- Dynamically Populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PAGE 6: ASK AGRONOMIST & COMMUNITY ================= -->
+    <div id="page-advisory" class="page-view hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="message-square" class="w-6 h-6 text-emerald-400"></i>
+          <span>AI Kisan Agronomist Advisory (किसान सलाहकार चैट)</span>
+        </h2>
+        <p class="text-xs text-slate-400">Ask any question regarding crop pests, fertilizers, soil treatment, or mandi rates in English or Hindi.</p>
+
+        <div class="flex gap-2">
+          <input type="text" id="agronomistInput" placeholder="जैसे: 'टमाटर में पीले धब्बे होने पर क्या डालें?' या 'What spray to use for rust?'" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-500">
+          <button id="btnAskAgronomist" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold flex items-center gap-2 transition shadow-lg shadow-brand-600/20">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Ask (पूछें)</span>
+          </button>
+        </div>
+
+        <div id="agronomistResponseBox" class="hidden bg-slate-900/90 border border-brand-500/30 rounded-xl p-5 space-y-3">
+          <div class="flex items-center gap-2 text-brand-400 font-bold text-xs">
+            <i data-lucide="bot" class="w-4 h-4"></i>
+            <span>AI Agronomist Prescription:</span>
+          </div>
+          <p id="agronomistAnswerEn" class="text-xs text-slate-200"></p>
+          <p id="agronomistAnswerHi" class="text-xs text-brand-300 font-medium"></p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p id="footerCopyright">© 2026 AgriShield AI. Built for Smart Agriculture & Crop Protection.</p>
+      <div class="flex items-center space-x-4">
+        <span>Toll-Free Helpline: <strong>1800-180-1551</strong></span>
+        <span>•</span>
+        <span>Kisan Portal & ICAR Compatible</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= CAMERA CAPTURE MODAL ================= -->
+  <div id="cameraModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-white text-base flex items-center gap-2">
+          <i data-lucide="camera" class="w-5 h-5 text-emerald-400"></i>
+          <span>Live Field Camera Capture</span>
+        </h3>
+        <button id="btnCloseCam" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center">
+        <video id="webcamVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+        <canvas id="snapshotCanvas" class="hidden"></canvas>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <button id="btnSwitchCam" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 flex items-center gap-1.5">
+          <i data-lucide="switch-camera" class="w-4 h-4"></i> Switch Cam
+        </button>
+        <button id="btnSnapPhoto" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-brand-600/30">
+          <i data-lucide="camera" class="w-4 h-4"></i> Capture & Diagnose
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PRINTABLE KISAN CROP HEALTH CARD ================= -->
+  <div id="printableHealthCard" class="hidden bg-white text-black p-8 font-sans">
+    <div class="border-4 border-green-800 p-6 rounded-lg space-y-4">
+      <div class="flex justify-between items-center border-b-2 border-green-800 pb-3">
+        <div>
+          <h1 class="text-2xl font-black text-green-900">KISAN CROP HEALTH CARD (किसान फसल स्वास्थ्य पर्ची)</h1>
+          <p class="text-sm text-gray-700">AgriShield AI Precision Diagnostics • Theme 3 Agriculture</p>
+        </div>
+        <div class="text-right text-xs text-gray-600">
+          <p><strong>Prescription ID:</strong> <span id="printRxId">AGRI-2026-9812</span></p>
+          <p><strong>Date & Time:</strong> <span id="printDate">2026-09-02</span></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-xs border-b border-gray-300 pb-3">
+        <div>
+          <p><strong>Crop Name (फसल):</strong> <span id="printCrop">Tomato (टमाटर)</span></p>
+          <p><strong>Diagnosis (निदान):</strong> <span id="printDisease">Early Blight (Alternaria solani)</span></p>
+          <p><strong>Pathogen Type:</strong> <span id="printPathogen">Fungal (फफूंद जनित)</span></p>
+        </div>
+        <div>
+          <p><strong>Severity Grade (गंभीरता):</strong> <span id="printSeverity">Moderate to High</span></p>
+          <p><strong>Diagnostic Confidence:</strong> <span id="printConfidence">96.4%</span></p>
+          <p><strong>Infected Area:</strong> <span id="printArea">24.5%</span></p>
+        </div>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <h3 class="font-bold text-green-900 uppercase">1. Chemical Treatment Prescription (रासायनिक उपचार):</h3>
+        <div id="printChemTreatments" class="text-gray-800"></div>
+
+        <h3 class="font-bold text-green-900 uppercase pt-2">2. Organic & Bio Remedies (जैविक उपचार):</h3>
+        <div id="printOrgTreatments" class="text-gray-800"></div>
+
+        <h3 class="font-bold text-green-900 uppercase pt-2">3. Recommended Dosage & Water Ratio:</h3>
+        <p id="printDosageSummary" class="text-gray-800">Mancozeb 75% WP @ 2.5g/L • 180 Litres Water/Acre</p>
+      </div>
+
+      <div class="border-t-2 border-green-800 pt-3 flex justify-between items-center text-[10px] text-gray-600">
+        <p>National Kisan Toll-Free Advisory: 1800-180-1551</p>
+        <p>Verified by AgriShield AI Diagnostic Engine</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PRINTABLE DOSAGE PRESCRIPTION SHEET ================= -->
+  <div id="printableDosageCard" class="hidden bg-white text-black p-8 font-sans">
+    <div class="border-4 border-emerald-900 p-6 rounded-lg space-y-4">
+      <div class="flex justify-between items-center border-b-2 border-emerald-900 pb-3">
+        <div>
+          <h1 class="text-2xl font-black text-emerald-900">PRECISION SPRAYER & FERTILIZER DOSAGE PRESCRIPTION</h1>
+          <p class="text-sm text-gray-700">AgriShield AI Precision Agronomy • Multi-Sprayer Tank Mixing Slip (सटीक दवा व खाद पर्ची)</p>
+        </div>
+        <div class="text-right text-xs text-gray-600">
+          <p><strong>Prescription Slip:</strong> <span id="printDosageSlipId">DOSAGE-2026-4481</span></p>
+          <p><strong>Date & Time:</strong> <span id="printDosageDate">2026-09-02</span></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 text-xs border-b border-gray-300 pb-3">
+        <div>
+          <p><strong>Sprayer Equipment:</strong> <span id="printDosageSprayer">Manual Knapsack (15L)</span></p>
+          <p><strong>Target Land Area:</strong> <span id="printDosageArea">2.0 Acres</span></p>
+          <p><strong>Chemical / Fertilizer:</strong> <span id="printDosageProduct">Mancozeb 75% WP</span></p>
+        </div>
+        <div>
+          <p><strong>Prescribed Dose Rate:</strong> <span id="printDosageDoseRate">2.5 g / Litre</span></p>
+          <p><strong>Tank Capacity:</strong> <span id="printDosageTankCap">15 Liters</span></p>
+          <p><strong>Spray Cycles:</strong> <span id="printDosageCycles">1 Application</span></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 text-xs bg-emerald-50 p-3 rounded-md border border-emerald-200">
+        <div>
+          <p class="font-bold text-emerald-900">Total Water Required:</p>
+          <p class="text-base font-extrabold text-gray-900" id="printDosageTotalWater">360 Liters</p>
+        </div>
+        <div>
+          <p class="font-bold text-emerald-900">Total Chemical Needed:</p>
+          <p class="text-base font-extrabold text-amber-700" id="printDosageTotalChem">900 grams (0.90 kg)</p>
+        </div>
+        <div>
+          <p class="font-bold text-emerald-900">Tank Refills Required:</p>
+          <p class="text-base font-extrabold text-gray-900" id="printDosageTankFills">24 Tanks (15L)</p>
+        </div>
+      </div>
+
+      <div class="border border-gray-300 p-3 rounded text-xs space-y-1">
+        <p class="font-bold text-emerald-900">Dose per Single Tank Fill:</p>
+        <p class="text-sm font-extrabold text-purple-900" id="printDosagePerTankDose">37.5 grams (or 2.5 measuring caps) per 15L Tank</p>
+      </div>
+
+      <div class="space-y-1 text-xs">
+        <h3 class="font-bold text-emerald-900 uppercase">Standard Tank Mixing Protocol (5 Steps):</h3>
+        <ol class="list-decimal list-inside text-gray-800 space-y-0.5">
+          <li>Fill tank with 50% clean water (pH 6.0 - 7.0).</li>
+          <li>Pre-mix wettable powder (WP/WDG) into a slurry in a separate bucket.</li>
+          <li>Add liquid concentrates (SC/EC/SL) into tank with continuous agitation.</li>
+          <li>Add Silicon Spreader Sticker @ 0.5 ml/L for rain fastness and uniform wetting.</li>
+          <li>Top up water to full capacity and spray immediately in early morning/evening.</li>
+        </ol>
+      </div>
+
+      <div class="border-t-2 border-emerald-900 pt-3 flex justify-between items-center text-[10px] text-gray-600">
+        <p>National Kisan Toll-Free Advisory: 1800-180-1551</p>
+        <p>Verified by AgriShield AI Precision Calculator</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript App -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
